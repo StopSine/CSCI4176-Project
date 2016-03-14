@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    >
+    android:orientation="horizontal"
+    android:padding="5dip"
+    android:minHeight="150dip">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--  ListRow Left sied Thumbnail image -->
+    <LinearLayout android:id="@+id/thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dip"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/image_bg"
+        android:layout_marginRight="5dip">
+
+        <ImageView
+            android:id="@+id/listImage"
+            android:layout_width="100dip"
+            android:layout_height="130dip"/>
+
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/listTitle"
-        android:textSize="30dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="3dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/thumbnail"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:textColor="#040404"
+        android:typeface="sans"
+        android:textSize="15dip"
+        android:textStyle="bold"/>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/listSubTitle"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        android:textSize="18dp"
-        android:paddingTop="2dp"
-        android:ellipsize="end"
-        android:paddingBottom="3dp"
-        android:maxLines="4"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listTitle"
+        android:textColor="#343434"
+        android:textSize="14dip"
+        android:lines="5"
+        android:ellipsize="end"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/thumbnail" />
+
+
+</RelativeLayout>

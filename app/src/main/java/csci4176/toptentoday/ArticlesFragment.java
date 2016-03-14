@@ -41,7 +41,7 @@ public class ArticlesFragment extends ListFragment {
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", ""))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", ""))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -57,8 +57,18 @@ public class ArticlesFragment extends ListFragment {
         ArrayList<ListItem> list = new ArrayList<ListItem>();
         try {
             JSONArray resultsArray = result.getJSONArray("results");
-            for (int i = 0; i < resultsArray.length(); i++){
-                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("abstract")));
+            for (int i = 0; i < 10; i++){
+                String imgUrl = null;
+                if(!resultsArray.getJSONObject(i).getString("media").isEmpty()){
+                    JSONArray mediaMetaDataArray = resultsArray.getJSONObject(i).getJSONArray("media").getJSONObject(0).getJSONArray("media-metadata");
+                    for (int j = 0; j < mediaMetaDataArray.length(); j++){
+                        if (mediaMetaDataArray.getJSONObject(j).getString("format").equals("Large Thumbnail")){
+                            imgUrl = mediaMetaDataArray.getJSONObject(j).getString("url");
+                            break;
+                        }
+                    }
+                }
+                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("abstract"), imgUrl));
             }
         }
         catch (JSONException e) {
@@ -93,14 +103,8 @@ public class ArticlesFragment extends ListFragment {
 
                 conn.disconnect();
                 js = new JSONObject(sb.toString());
-            } catch (MalformedURLException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (JSONException e) {
-            e.printStackTrace();
             }
             return js;
         }

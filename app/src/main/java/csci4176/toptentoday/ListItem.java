@@ -6,9 +6,11 @@ package csci4176.toptentoday;
 public class ListItem {
     public String title;
     public String subTitle;
+    public String imgUrl;
 
-    public ListItem(String title, String subTitle) {
+    public ListItem(String title, String subTitle, String imgUrl) {
         this.title = title;
         this.subTitle = subTitle;
+        this.imgUrl = imgUrl;
     }
 }
