@@ -1,5 +1,6 @@
 package csci4176.toptentoday;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -9,17 +10,29 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.tv.TvSeries;
+
 public class ShowsFragment extends ListFragment {
 
-    private static final String TAG = "MoviesFrag";
-
-    String[] numbers = new String[] { "one", "two", "three", "four",
-            "five", "six", "seven", "eight", "nine", "ten", "eleven",
-            "twelve", "thirteen", "fourteen", "fifteen" };
+    private static final String TAG = "ShowsFrag";
+    CustomArrayAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(), R.layout.list_item, R.id.mainText, numbers);
+        //TODO: Fix list refreshing when page switches and stop using the api wrapper (its lazy)
+        //fetch api data
+        new ShowsLookupTask().execute();
+
+        //set adapter up with empty placeholder list
+        if (adapter == null) {
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", ""))));
+        }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -27,5 +40,27 @@ public class ShowsFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Log.d(TAG, "id=" + id);
+    }
+
+    public void updateList(List<TvSeries> result){
+        ArrayList<ListItem> list = new ArrayList<ListItem>();
+        for (int i = 0; i < 10; i++){
+            list.add(new ListItem(result.get(i).getName(), result.get(i).getOverview()));
+        }
+        adapter = new CustomArrayAdapter(this.getContext(), list);
+        setListAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    class ShowsLookupTask extends AsyncTask<Void, Void, List<TvSeries>> {
+
+        protected List<TvSeries> doInBackground(Void... nothing) {
+            //TODO: set parameters properly
+            return new TmdbApi("c0a48133bf57722a3829e6456f01b24f").getTvSeries().getPopular("en",1).getResults();
+        }
+
+        protected void onPostExecute(List<TvSeries> result) {
+            updateList(result);
+        }
     }
 }
