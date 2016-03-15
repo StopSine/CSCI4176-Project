@@ -1,5 +1,7 @@
 package csci4176.toptentoday;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -41,7 +43,7 @@ public class ArticlesFragment extends ListFragment {
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", ""))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", ""))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -49,7 +51,9 @@ public class ArticlesFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d(TAG, "id=" + id);
+        Uri uri = Uri.parse(adapter.getItem((int)id).url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     //called when API data returns
@@ -68,7 +72,7 @@ public class ArticlesFragment extends ListFragment {
                         }
                     }
                 }
-                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("abstract"), imgUrl));
+                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("abstract"), imgUrl, resultsArray.getJSONObject(i).getString("url")));
             }
         }
         catch (JSONException e) {

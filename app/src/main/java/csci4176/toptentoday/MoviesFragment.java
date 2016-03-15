@@ -1,5 +1,7 @@
 package csci4176.toptentoday;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -29,7 +31,7 @@ public class MoviesFragment extends ListFragment {
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", ""))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", ""))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -37,15 +39,18 @@ public class MoviesFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d(TAG, "id=" + id);
+        Uri uri = Uri.parse(adapter.getItem((int)id).url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     //called when API data returns
     public void updateList(List<MovieDb> result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
         String baseImgUrl = "http://image.tmdb.org/t/p/w130";
+        String baseUrl = "https://www.themoviedb.org/movie/";
         for (int i = 0; i < 10; i++){
-            list.add(new ListItem(result.get(i).getTitle(), result.get(i).getOverview(), baseImgUrl + result.get(i).getPosterPath()));
+            list.add(new ListItem(result.get(i).getTitle(), result.get(i).getOverview(), baseImgUrl + result.get(i).getPosterPath(), baseUrl + result.get(i).getId()));
         }
         adapter = new CustomArrayAdapter(this.getContext(), list);
         setListAdapter(adapter);

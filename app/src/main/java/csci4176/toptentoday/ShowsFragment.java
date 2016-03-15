@@ -1,5 +1,7 @@
 package csci4176.toptentoday;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -31,7 +33,7 @@ public class ShowsFragment extends ListFragment {
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", ""))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", ""))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -39,14 +41,17 @@ public class ShowsFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d(TAG, "id=" + id);
+        Uri uri = Uri.parse(adapter.getItem((int)id).url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     public void updateList(List<TvSeries> result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
         String baseImgUrl = "http://image.tmdb.org/t/p/w130";
+        String baseUrl = "https://www.themoviedb.org/tv/";
         for (int i = 0; i < 10; i++){
-            list.add(new ListItem(result.get(i).getName(), result.get(i).getOverview(), baseImgUrl + result.get(i).getPosterPath()));
+            list.add(new ListItem(result.get(i).getName(), result.get(i).getOverview(), baseImgUrl + result.get(i).getPosterPath(), baseUrl + result.get(i).getId()));
         }
         adapter = new CustomArrayAdapter(this.getContext(), list);
         setListAdapter(adapter);
