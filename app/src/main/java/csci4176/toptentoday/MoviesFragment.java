@@ -9,16 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.util.Log;
-import android.os.AsyncTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
-import info.movito.themoviedbapi.*;
-import info.movito.themoviedbapi.model.MovieDb;
 
 import java.util.ArrayList;
 
-public class MoviesFragment extends ListFragment {
+public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnDownloadCompleted{
 
     private static final String TAG = "MoviesFrag";
     CustomArrayAdapter adapter;
@@ -26,8 +28,12 @@ public class MoviesFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        //fetch api data
-        new MovieLookupTask().execute();
+        try {
+            new JSONDownloadTask(this).execute(new URL("http://api.themoviedb.org/3/discover/movie?api_key=c0a48133bf57722a3829e6456f01b24f&page=1&release_date.gte=2016-02-01&release_date.lte=2016-03-01&sort_by=popularity.desc"));
+        }
+        catch (MalformedURLException e){
+
+        }
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
@@ -44,43 +50,21 @@ public class MoviesFragment extends ListFragment {
         startActivity(intent);
     }
 
-    //called when API data returns
-    public void updateList(List<MovieDb> result){
+    public void updateList(JSONObject result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
         String baseImgUrl = "http://image.tmdb.org/t/p/w130";
         String baseUrl = "https://www.themoviedb.org/movie/";
-        for (int i = 0; i < 10; i++){
-            list.add(new ListItem(result.get(i).getTitle(), result.get(i).getOverview(), baseImgUrl + result.get(i).getPosterPath(), baseUrl + result.get(i).getId()));
+        try {
+            JSONArray resultsArray = result.getJSONArray("results");
+            for (int i = 0; i < 10; i++){
+                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("overview"), baseImgUrl + resultsArray.getJSONObject(i).getString("poster_path"), baseUrl + resultsArray.getJSONObject(i).getString("id")));
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
         }
         adapter = new CustomArrayAdapter(this.getContext(), list);
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
-    }
-
-    class MovieLookupTask extends AsyncTask<Void, Void, List<MovieDb>> {
-
-        protected List<MovieDb> doInBackground(Void... nothing) {
-            //TODO: set parameters properly
-            return new TmdbApi("c0a48133bf57722a3829e6456f01b24f").getDiscover().getDiscover(
-                    1,
-                    "en",
-                    "popularity.desc",
-                    true,
-                    2016,
-                    2016,
-                    0,
-                    0,
-                    "",
-                    "2016-02-01",
-                    "2016-03-01",
-                    "",
-                    "",
-                    ""
-            ).getResults();
-        }
-
-        protected void onPostExecute(List<MovieDb> result) {
-            updateList(result);
-        }
     }
 }
