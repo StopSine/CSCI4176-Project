@@ -41,7 +41,7 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", ""))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "" , null))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -49,8 +49,8 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Uri uri = Uri.parse(adapter.getItem((int)id).url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        Intent intent = new Intent(this.getActivity(), ArticleDetails.class);
+        intent.putExtra("json", adapter.getItem(position).json.toString());
         startActivity(intent);
     }
 
@@ -70,7 +70,10 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
                         }
                     }
                 }
-                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("abstract"), imgUrl, resultsArray.getJSONObject(i).getString("url")));
+                String title = resultsArray.getJSONObject(i).getString("title");
+                String overview =  resultsArray.getJSONObject(i).getString("abstract");
+                String url =  resultsArray.getJSONObject(i).getString("url");
+                list.add(new ListItem(title, overview, imgUrl, url, resultsArray.getJSONObject(i)));
             }
         }
         catch (JSONException e) {

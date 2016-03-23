@@ -1,14 +1,14 @@
 package csci4176.toptentoday;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +37,7 @@ public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnD
 
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", ""))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "", null))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -45,19 +45,23 @@ public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnD
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Uri uri = Uri.parse(adapter.getItem((int)id).url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        Intent intent = new Intent(this.getActivity(), MovieDetails.class);
+        intent.putExtra("json", adapter.getItem(position).json.toString());
         startActivity(intent);
     }
 
     public void updateList(JSONObject result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
-        String baseImgUrl = "http://image.tmdb.org/t/p/w130";
+        String basePosterImgUrl = "http://image.tmdb.org/t/p/w130";
         String baseUrl = "https://www.themoviedb.org/movie/";
         try {
             JSONArray resultsArray = result.getJSONArray("results");
             for (int i = 0; i < 10; i++){
-                list.add(new ListItem(resultsArray.getJSONObject(i).getString("title"), resultsArray.getJSONObject(i).getString("overview"), baseImgUrl + resultsArray.getJSONObject(i).getString("poster_path"), baseUrl + resultsArray.getJSONObject(i).getString("id")));
+                String title = resultsArray.getJSONObject(i).getString("title");
+                String overview =  resultsArray.getJSONObject(i).getString("overview");
+                String imgUrl = basePosterImgUrl + resultsArray.getJSONObject(i).getString("poster_path");
+                String url = baseUrl + resultsArray.getJSONObject(i).getString("id");
+                list.add(new ListItem(title, overview, imgUrl, url, resultsArray.getJSONObject(i)));
             }
         }
         catch (JSONException e) {
