@@ -18,7 +18,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:color/white"
-            app:expandedTitleMarginBottom="15dp"
+            app:expandedTitleMarginBottom="12dp"
             app:expandedTitleGravity="bottom"
             android:fitsSystemWindows="true">
 

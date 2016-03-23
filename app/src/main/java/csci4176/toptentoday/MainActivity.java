@@ -1,5 +1,6 @@
 package csci4176.toptentoday;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -85,9 +86,11 @@ public class MainActivity extends AppCompatActivity {
     public void onNavItemSelected(MenuItem menuItem) {
 
         switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
+            case R.id.nav_settings:
+                showSettings();
                 break;
-            case R.id.nav_second_fragment:
+            case R.id.nav_licenses:
+                showLicenses();
                 break;
             default:
         }
@@ -102,7 +105,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showSettings(){
-        //nothing yet
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     @Override

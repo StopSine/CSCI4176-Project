@@ -1,0 +1,10 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="all-sections"
+        android:entries="@array/pref_filter_list_titles"
+        android:entryValues="@array/pref_filter_list_values"
+        android:key="filter_list"
+        android:title="@string/pref_title_filter" />
+
+</PreferenceScreen>

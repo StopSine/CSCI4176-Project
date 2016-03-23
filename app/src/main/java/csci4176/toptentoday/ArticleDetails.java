@@ -1,10 +1,14 @@
 package csci4176.toptentoday;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -19,11 +23,12 @@ import java.io.IOException;
 
 public class ArticleDetails extends AppCompatActivity {
 
+    JSONObject json;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        JSONObject json;
         String title = "";
         String url = "";
         Bundle extras = getIntent().getExtras();
@@ -56,8 +61,26 @@ public class ArticleDetails extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.action_open_new:
+                String url = "";
+                try{
+                    url = json.getString("url");
+                }
+                catch (JSONException e){
+
+                }
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_detail_view, menu);
+        return true;
     }
 
     class scrapHtmlTask extends AsyncTask<String, Void, String> {

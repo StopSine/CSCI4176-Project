@@ -1,8 +1,11 @@
 package csci4176.toptentoday;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +35,12 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //fetch api data
+
+        SharedPreferences prefs = this.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        // then you use
+        String filter = prefs.getString("filter-list", "all-sections");
         try {
-            new JSONDownloadTask(this).execute(new URL("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/all-sections/1.json?api-key=16802a58ff1e9b1758caf24c9c93f90c:7:74374990"));
+            new JSONDownloadTask(this).execute(new URL("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/" + filter + "/1.json?api-key=16802a58ff1e9b1758caf24c9c93f90c:7:74374990"));
         }
         catch (MalformedURLException e){
 

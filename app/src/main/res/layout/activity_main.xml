@@ -38,13 +38,13 @@
             android:layout_below="@id/tab_layout"/>
 
     </RelativeLayout>
-
     <android.support.design.widget.NavigationView
-        android:paddingTop="100dp"
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@android:color/white"
-        app:menu="@menu/drawer_view" />
+        app:menu="@menu/drawer_view"
+        app:headerLayout="@layout/drawer_header">
+        </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
