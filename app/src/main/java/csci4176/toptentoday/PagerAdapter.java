@@ -8,9 +8,15 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 public class PagerAdapter extends FragmentPagerAdapter {
     int mNumOfTabs;
 
+    ArticlesFragment articles;
+
     public PagerAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
+    }
+
+    public ArticlesFragment getArticles(){
+        return articles;
     }
 
     @Override
@@ -18,7 +24,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                ArticlesFragment articles = new ArticlesFragment();
+                articles = new ArticlesFragment();
                 return articles;
             case 1:
                 MoviesFragment movies = new MoviesFragment();

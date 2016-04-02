@@ -36,6 +36,17 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //fetch api data
 
+        refresh();
+
+        //set adapter up with empty placeholder list
+        if (adapter == null) {
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "" , null))));
+        }
+        setListAdapter(adapter);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    public void refresh(){
         SharedPreferences prefs = this.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         // then you use
         String filter = prefs.getString("filter-list", "all-sections");
@@ -45,13 +56,6 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
         catch (MalformedURLException e){
 
         }
-
-        //set adapter up with empty placeholder list
-        if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "" , null))));
-        }
-        setListAdapter(adapter);
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -67,20 +71,10 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
         try {
             JSONArray resultsArray = result.getJSONArray("results");
             for (int i = 0; i < 10; i++){
-                String imgUrl = null;
-                if(!resultsArray.getJSONObject(i).getString("media").isEmpty()){
-                    JSONArray mediaMetaDataArray = resultsArray.getJSONObject(i).getJSONArray("media").getJSONObject(0).getJSONArray("media-metadata");
-                    for (int j = 0; j < mediaMetaDataArray.length(); j++){
-                        if (mediaMetaDataArray.getJSONObject(j).getString("format").equals("Large Thumbnail")){
-                            imgUrl = mediaMetaDataArray.getJSONObject(j).getString("url");
-                            break;
-                        }
-                    }
-                }
                 String title = resultsArray.getJSONObject(i).getString("title");
                 String overview =  resultsArray.getJSONObject(i).getString("abstract");
                 String url =  resultsArray.getJSONObject(i).getString("url");
-                list.add(new ListItem(title, overview, imgUrl, url, resultsArray.getJSONObject(i)));
+                list.add(new ListItem(title, overview, null, url, resultsArray.getJSONObject(i)));
             }
         }
         catch (JSONException e) {

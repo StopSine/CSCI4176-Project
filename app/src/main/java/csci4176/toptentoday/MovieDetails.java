@@ -1,18 +1,26 @@
 package csci4176.toptentoday;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,8 +53,7 @@ public class MovieDetails extends AppCompatActivity {
                 overview = json.getString("overview");
                 release = json.getString("release_date");
                 votes = json.getDouble("vote_average") + "/10";
-            }
-            catch (JSONException e){
+            } catch (JSONException e) {
 
             }
         }
@@ -79,6 +86,7 @@ public class MovieDetails extends AppCompatActivity {
         public BitmapWorkerTask(ImageView image) {
             imageViewReference = new WeakReference<ImageView>(image);
         }
+
         @Override
         protected Bitmap doInBackground(String... url) {
             Bitmap b = null;
@@ -99,6 +107,21 @@ public class MovieDetails extends AppCompatActivity {
                     imageView.setImageBitmap(b);
                 }
             }
+        }
+    }
+
+    public void onClick(View v) {
+        boolean PermissionFineLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+        boolean PermissionCourseLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+        if (PermissionCourseLocation && PermissionFineLocation) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},0);
+        }
+        else {
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            String baseUrl = "http://www.google.ca/movies?near=" + loc.getLatitude() + "," + loc.getLongitude();
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUrl));
+            startActivity(browserIntent);
         }
     }
 

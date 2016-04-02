@@ -64,9 +64,14 @@ public class CustomArrayAdapter extends ArrayAdapter<ListItem> {
         title.setText(item.title);
         subTitle.setText(item.subTitle);
 
-        if (item.imgUrl != null && !item.imgUrl.isEmpty()) {
-            loadBitmap(item.imgUrl, image);
-            image.invalidate();
+        if (item.imgUrl != null) {
+            if (!item.imgUrl.isEmpty()) {
+                loadBitmap(item.imgUrl, image);
+                image.invalidate();
+            }
+        }
+        else {
+            image.setVisibility(View.GONE);
         }
         return convertView;
     }

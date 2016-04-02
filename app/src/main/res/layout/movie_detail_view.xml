@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -96,11 +97,16 @@
                 android:id="@+id/movie_votes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/showtimesButton"
+                android:textColor="@color/colorAccent"
+                android:padding="0dp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Click for showtimes (unimplemented)"/>
+                android:text="Click for nearby showtimes"
+                android:onClick="onClick"
+                android:clickable="true"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

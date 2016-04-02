@@ -3,48 +3,6 @@
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
     <string name="open_in_new">Open in new window</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_article_details">ArticleDetails</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
 
     <string name="pref_title_filter">Filter articles</string>
-    <string-array name="pref_filter_list_titles">
-        <item>All</item>
-        <item>World</item>
-        <item>Science</item>
-        <item>Politics</item>
-        <item>United States</item>
-        <item>Technology</item>
-        <item>Magazine</item>
-        <item>Fashion and Style</item>
-        <item>Business Day</item>
-        <item>Opinion</item>
-        <item>Health</item>
-        <item>Sports</item>
-        <item>Arts</item>
-        <item>Food</item>
-        <item>Travel</item>
-    </string-array>
-    <string-array name="pref_filter_list_values">
-        <item>all-sections</item>
-        <item>world</item>
-        <item>science</item>
-        <item>politics</item>
-        <item>national</item>
-        <item>technology</item>
-        <item>magazine</item>
-        <item>fashion</item>
-        <item>business</item>
-        <item>opinion</item>
-        <item>health</item>
-        <item>sports</item>
-        <item>arts</item>
-        <item>food</item>
-        <item>travel</item>
-    </string-array>
 </resources>

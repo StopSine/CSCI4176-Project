@@ -1,6 +1,8 @@
 package csci4176.toptentoday;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private NavigationView nView;
     private ActionBarDrawerToggle mDrawerToggle;
+    PagerAdapter adapter;
 
     //setup toolbar, tabs, and pager
     @Override
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Shows"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.setOffscreenPageLimit(2);
@@ -85,14 +88,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void onNavItemSelected(MenuItem menuItem) {
 
-        switch(menuItem.getItemId()) {
-            case R.id.nav_settings:
-                showSettings();
-                break;
+        switch(menuItem.getGroupId()) {
+            case R.id.pref_filter_group:
+                String stringToStore = menuItem.getTitle().toString().toLowerCase();
+                if (menuItem.getItemId() == R.id.pref_filter_all){
+                    stringToStore = "all-sections";
+                }
+                SharedPreferences prefs = this.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putString("filter-list", stringToStore);
+                edit.commit();
+                adapter.getArticles().refresh();
+                return;
+            default:
+        }
+        switch(menuItem.getItemId()){
             case R.id.nav_licenses:
                 showLicenses();
                 break;
-            default:
         }
         mDrawer.closeDrawers();
     }
@@ -102,11 +115,6 @@ public class MainActivity extends AppCompatActivity {
         //tmp paste of licenses to add
         //NYT API
         //https://www.themoviedb.org/documentation/api
-    }
-
-    public void showSettings(){
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
     }
 
     @Override
