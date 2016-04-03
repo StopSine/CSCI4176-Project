@@ -28,19 +28,23 @@ public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnD
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        refresh();
+
+        if (adapter == null) {
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "", null))));
+        }
+        setListAdapter(adapter);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    public void refresh(){
+        System.out.println("refreshing");
         try {
             new JSONDownloadTask(this).execute(new URL("http://api.themoviedb.org/3/discover/movie?api_key=c0a48133bf57722a3829e6456f01b24f&page=1&release_date.gte=2016-02-01&release_date.lte=2016-03-01&sort_by=popularity.desc"));
         }
         catch (MalformedURLException e){
 
         }
-
-        //set adapter up with empty placeholder list
-        if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "", null))));
-        }
-        setListAdapter(adapter);
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override

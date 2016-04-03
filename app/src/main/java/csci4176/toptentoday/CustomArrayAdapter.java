@@ -26,26 +26,9 @@ import java.util.ArrayList;
 public class CustomArrayAdapter extends ArrayAdapter<ListItem> {
 
     private static final String TAG = "CustomArray";
-    private LruCache<String, Bitmap> mMemoryCache;
 
     public CustomArrayAdapter(Context context, ArrayList<ListItem> listItems) {
         super(context, 0, listItems);
-        // Get memory class of this device, exceeding this amount will throw an
-        // OutOfMemory exception.
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-
-        // Use 1/8th of the available memory for this memory cache.
-        final int cacheSize = maxMemory / 8;
-
-        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-
-            protected int sizeOf(String key, Bitmap bitmap) {
-                // The cache size will be measured in bytes rather than number
-                // of items.
-                return bitmap.getByteCount() / 1024;
-            }
-
-        };
     }
 
     @Override
@@ -66,65 +49,12 @@ public class CustomArrayAdapter extends ArrayAdapter<ListItem> {
 
         if (item.imgUrl != null) {
             if (!item.imgUrl.isEmpty()) {
-                loadBitmap(item.imgUrl, image);
-                image.invalidate();
+               new BitmapWorkerTask().loadBitmap(item.imgUrl, image);
             }
         }
         else {
             image.setVisibility(View.GONE);
         }
         return convertView;
-    }
-
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
-        }
-    }
-
-    public Bitmap getBitmapFromMemCache(String key) {
-        return mMemoryCache.get(key);
-    }
-
-    public void loadBitmap(String url, ImageView image) {
-        final String imageKey = String.valueOf(url);
-
-        final Bitmap bitmap = getBitmapFromMemCache(imageKey);
-        if (bitmap != null) {
-            image.setImageBitmap(bitmap);
-        } else {
-            BitmapWorkerTask task = new BitmapWorkerTask(image);
-            task.execute(url);
-        }
-    }
-
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-
-        public BitmapWorkerTask(ImageView image) {
-            imageViewReference = new WeakReference<ImageView>(image);
-        }
-        @Override
-        protected Bitmap doInBackground(String... url) {
-            Bitmap b = null;
-            try {
-                URL imgUrl = new URL(url[0]);
-                b = BitmapFactory.decodeStream(imgUrl.openConnection().getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            addBitmapToMemoryCache(url[0], b);
-            return b;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap b) {
-            if (imageViewReference != null && b != null) {
-                final ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
-                    imageView.setImageBitmap(b);
-                }
-            }
-        }
     }
 }

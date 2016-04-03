@@ -3,15 +3,13 @@ package csci4176.toptentoday;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 
 public class ArticlesFragment extends ListFragment implements JSONDownloadTask.OnDownloadCompleted {
@@ -48,8 +49,10 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
 
     public void refresh(){
         SharedPreferences prefs = this.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        // then you use
-        String filter = prefs.getString("filter-list", "all-sections");
+        Set<String> filterSet = prefs.getStringSet("filter-list", new HashSet<String>(Arrays.asList("all-sections")));
+        String filter = TextUtils.join(",", filterSet);
+        System.out.println(filter);
+
         try {
             new JSONDownloadTask(this).execute(new URL("http://api.nytimes.com/svc/mostpopular/v2/mostviewed/" + filter + "/1.json?api-key=16802a58ff1e9b1758caf24c9c93f90c:7:74374990"));
         }

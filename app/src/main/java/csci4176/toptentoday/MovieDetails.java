@@ -4,34 +4,32 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
-public class MovieDetails extends AppCompatActivity {
+public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.OnDownloadCompleted{
 
     JSONObject json;
 
@@ -53,8 +51,10 @@ public class MovieDetails extends AppCompatActivity {
                 overview = json.getString("overview");
                 release = json.getString("release_date");
                 votes = json.getDouble("vote_average") + "/10";
-            } catch (JSONException e) {
-
+                new JSONDownloadTask(this).execute(new URL("http://www.omdbapi.com/?t="+ URLEncoder.encode(title, "UTF-8")+"&type=movie&tomatoes=true"));
+            }
+            catch (JSONException | MalformedURLException | UnsupportedEncodingException e){
+                e.printStackTrace();
             }
         }
 
@@ -69,45 +69,50 @@ public class MovieDetails extends AppCompatActivity {
 
         ImageView imgView = (ImageView) findViewById(R.id.movie_detail_image);
         String backdrop = "https://image.tmdb.org/t/p/w780" + backdropPath;
-        new BitmapWorkerTask(imgView).execute(backdrop);
+        new BitmapWorkerTask().loadBitmap(backdrop, imgView);
 
         TextView overviewTextView = (TextView) findViewById(R.id.movie_overview);
         overviewTextView.setText(overview);
         TextView releaseTextView = (TextView) findViewById(R.id.movie_release);
         releaseTextView.setText(release);
-        TextView votesTextView = (TextView) findViewById(R.id.movie_votes);
+        TextView votesTextView = (TextView) findViewById(R.id.votes);
         votesTextView.setText(votes);
 
     }
 
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-
-        public BitmapWorkerTask(ImageView image) {
-            imageViewReference = new WeakReference<ImageView>(image);
+    public void updateList(JSONObject result){
+        String imdbVotes = "";
+        String tomatoesVotes = "";
+        String[] genres = {};
+        try {
+            imdbVotes = result.getString("imdbRating") + "/10";
+            tomatoesVotes = result.getString("tomatoRating") + "/10";
+            genres = result.getString("Genre").split(",\\s+");
         }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+        LinearLayout tableLayout = (LinearLayout) findViewById(R.id.genre_table);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        @Override
-        protected Bitmap doInBackground(String... url) {
-            Bitmap b = null;
-            try {
-                URL imgUrl = new URL(url[0]);
-                b = BitmapFactory.decodeStream(imgUrl.openConnection().getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
+        for (int i = 0; i < 3; i++) {
+            TextView textView = (TextView) inflater.inflate(R.layout.genre_text, null);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+            params.setMargins(10, 0, 10, 0);
+            textView.setLayoutParams(params);
+            textView.setWidth(0);
+            if (i < genres.length) {
+                textView.setBackgroundResource(R.drawable.genre_bg);
+                textView.setText(genres[i]);
             }
-            return b;
+            tableLayout.addView(textView);
         }
-
-        @Override
-        protected void onPostExecute(Bitmap b) {
-            if (imageViewReference != null && b != null) {
-                final ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
-                    imageView.setImageBitmap(b);
-                }
-            }
-        }
+        TextView imdbVotesTextView = (TextView) findViewById(R.id.imdb_votes);
+        imdbVotesTextView.setText(imdbVotes);
+        TextView tomatoesVotesTextView = (TextView) findViewById(R.id.tomatoes_votes);
+        tomatoesVotesTextView.setText(tomatoesVotes);
     }
 
     public void onClick(View v) {

@@ -1,21 +1,22 @@
 package csci4176.toptentoday;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private NavigationView nView;
     private ActionBarDrawerToggle mDrawerToggle;
+
     PagerAdapter adapter;
 
     //setup toolbar, tabs, and pager
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         nView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -56,14 +58,14 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        viewPager.setOffscreenPageLimit(2);
+        mViewPager.setAdapter(adapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        mViewPager.setOffscreenPageLimit(2);
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
+                mViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -74,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-
         nView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        menuItem.setChecked(true);
                         onNavItemSelected(menuItem);
                         return true;
                     }
@@ -86,17 +88,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onNavItemSelected(MenuItem menuItem) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main_view, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                int currItem = mViewPager.getCurrentItem();
+                switch(currItem){
+                    case 0:
+                        adapter.getArticles().refresh();
+                        break;
+                    case 1:
+                        adapter.getMovies().refresh();
+                        break;
+                    case 2:
+                        adapter.getShows().refresh();
+                        break;
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onNavItemSelected(MenuItem menuItem) {
         switch(menuItem.getGroupId()) {
             case R.id.pref_filter_group:
                 String stringToStore = menuItem.getTitle().toString().toLowerCase();
-                if (menuItem.getItemId() == R.id.pref_filter_all){
-                    stringToStore = "all-sections";
-                }
                 SharedPreferences prefs = this.getSharedPreferences("prefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor edit = prefs.edit();
-                edit.putString("filter-list", stringToStore);
+                Set<String> filterSet = prefs.getStringSet("filter-list", new HashSet<String>(Arrays.asList("all-sections")));
+                filterSet.add(stringToStore);
+                if (menuItem.getItemId() == R.id.pref_filter_all){
+                    filterSet = new HashSet<String>(Arrays.asList("all-sections"));
+                }
+                edit.putStringSet("filter-list", filterSet);
                 edit.commit();
                 adapter.getArticles().refresh();
                 return;
