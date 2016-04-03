@@ -71,17 +71,21 @@ public class ArticlesFragment extends ListFragment implements JSONDownloadTask.O
     //called when API data returns
     public void updateList(JSONObject result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
-        try {
-            JSONArray resultsArray = result.getJSONArray("results");
-            for (int i = 0; i < 10; i++){
-                String title = resultsArray.getJSONObject(i).getString("title");
-                String overview =  resultsArray.getJSONObject(i).getString("abstract");
-                String url =  resultsArray.getJSONObject(i).getString("url");
-                list.add(new ListItem(title, overview, null, url, resultsArray.getJSONObject(i)));
-            }
+        if (result == null){
+            list.add(new ListItem("Something Went Wrong!", "Check your internet connection, and try to refresh", null, null, null));
         }
-        catch (JSONException e) {
-            e.printStackTrace();
+        else {
+            try {
+                JSONArray resultsArray = result.getJSONArray("results");
+                for (int i = 0; i < 10; i++) {
+                    String title = resultsArray.getJSONObject(i).getString("title");
+                    String overview = resultsArray.getJSONObject(i).getString("abstract");
+                    String url = resultsArray.getJSONObject(i).getString("url");
+                    list.add(new ListItem(title, overview, null, url, resultsArray.getJSONObject(i)));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         adapter = new CustomArrayAdapter(this.getContext(), list);
         setListAdapter(adapter);

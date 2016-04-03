@@ -50,7 +50,7 @@ class JSONDownloadTask extends AsyncTask<URL, Void, JSONObject> {
             conn.disconnect();
             js = new JSONObject(sb.toString());
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            return null;
         }
         return js;
     }

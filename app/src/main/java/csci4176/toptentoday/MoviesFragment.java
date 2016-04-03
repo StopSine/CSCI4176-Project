@@ -16,9 +16,12 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnDownloadCompleted{
 
@@ -38,9 +41,13 @@ public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnD
     }
 
     public void refresh(){
-        System.out.println("refreshing");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        Date newDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         try {
-            new JSONDownloadTask(this).execute(new URL("http://api.themoviedb.org/3/discover/movie?api_key=c0a48133bf57722a3829e6456f01b24f&page=1&release_date.gte=2016-02-01&release_date.lte=2016-03-01&sort_by=popularity.desc"));
+            new JSONDownloadTask(this).execute(new URL("http://api.themoviedb.org/3/discover/movie?api_key=c0a48133bf57722a3829e6456f01b24f&page=1&release_date.gte="+dateFormat.format(newDate)+"&sort_by=popularity.desc"));
         }
         catch (MalformedURLException e){
 
@@ -56,20 +63,24 @@ public class MoviesFragment extends ListFragment implements JSONDownloadTask.OnD
 
     public void updateList(JSONObject result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
-        String basePosterImgUrl = "http://image.tmdb.org/t/p/w130";
-        String baseUrl = "https://www.themoviedb.org/movie/";
-        try {
-            JSONArray resultsArray = result.getJSONArray("results");
-            for (int i = 0; i < 10; i++){
-                String title = resultsArray.getJSONObject(i).getString("title");
-                String overview =  resultsArray.getJSONObject(i).getString("overview");
-                String imgUrl = basePosterImgUrl + resultsArray.getJSONObject(i).getString("poster_path");
-                String url = baseUrl + resultsArray.getJSONObject(i).getString("id");
-                list.add(new ListItem(title, overview, imgUrl, url, resultsArray.getJSONObject(i)));
-            }
+        if (result == null){
+            list.add(new ListItem("Something Went Wrong!", "Check your internet connection, and try to refresh", null, null, null));
         }
-        catch (JSONException e) {
-            e.printStackTrace();
+        else {
+            String basePosterImgUrl = "http://image.tmdb.org/t/p/w130";
+            String baseUrl = "https://www.themoviedb.org/movie/";
+            try {
+                JSONArray resultsArray = result.getJSONArray("results");
+                for (int i = 0; i < 10; i++) {
+                    String title = resultsArray.getJSONObject(i).getString("title");
+                    String overview = resultsArray.getJSONObject(i).getString("overview");
+                    String imgUrl = basePosterImgUrl + resultsArray.getJSONObject(i).getString("poster_path");
+                    String url = baseUrl + resultsArray.getJSONObject(i).getString("id");
+                    list.add(new ListItem(title, overview, imgUrl, url, resultsArray.getJSONObject(i)));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         adapter = new CustomArrayAdapter(this.getContext(), list);
         setListAdapter(adapter);
