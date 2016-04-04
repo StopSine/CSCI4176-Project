@@ -3,8 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dip"
-    android:minHeight="50dip">
+    android:padding="10dip">
 
     <LinearLayout android:id="@+id/thumbnail"
         android:layout_alignParentLeft="true"
@@ -43,7 +42,8 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:textSize="14dip"
-        android:lines="7"
+        android:maxLines="7"
+        android:minLines="4"
         android:ellipsize="end"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail" />

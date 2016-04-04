@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -88,7 +87,6 @@ public class ArticleDetails extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... url) {
-            System.out.println(url[0]);
             String fullStory = "\t";
             try {
                 Document doc = Jsoup.connect(url[0]).get();

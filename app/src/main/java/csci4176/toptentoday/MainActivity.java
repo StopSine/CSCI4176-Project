@@ -1,6 +1,7 @@
 package csci4176.toptentoday;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -135,17 +136,11 @@ public class MainActivity extends AppCompatActivity {
         }
         switch(menuItem.getItemId()){
             case R.id.nav_licenses:
-                showLicenses();
+                Intent intent = new Intent(this, Licenses.class);
+                startActivity(intent);
                 break;
         }
         mDrawer.closeDrawers();
-    }
-
-    public void showLicenses(){
-        //TODO:
-        //tmp paste of licenses to add
-        //NYT API
-        //https://www.themoviedb.org/documentation/api
     }
 
     @Override

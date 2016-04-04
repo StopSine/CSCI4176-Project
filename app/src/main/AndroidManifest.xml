@@ -23,6 +23,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Licenses"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="csci4176.toptentoday.MainActivity" />
+        </activity>
+        <activity
             android:name=".MovieDetails"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
