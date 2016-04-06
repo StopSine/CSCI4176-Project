@@ -21,11 +21,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by Blair on 3/13/2016.
+ * Array adapter to store multiple values, since both text and subtext are needed
  */
 public class CustomArrayAdapter extends ArrayAdapter<ListItem> {
 
-    private static final String TAG = "CustomArray";
 
     public CustomArrayAdapter(Context context, ArrayList<ListItem> listItems) {
         super(context, 0, listItems);
@@ -34,15 +33,16 @@ public class CustomArrayAdapter extends ArrayAdapter<ListItem> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        //setup list item values and images
         ListItem item = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
 
-        TextView title = (TextView) convertView.findViewById(R.id.listTitle);
-        TextView subTitle = (TextView) convertView.findViewById(R.id.listSubTitle);
-        ImageView image = (ImageView) convertView.findViewById(R.id.listImage);;
+        TextView title = (TextView) convertView.findViewById(R.id.list_title);
+        TextView subTitle = (TextView) convertView.findViewById(R.id.list_subtitle);
+        ImageView image = (ImageView) convertView.findViewById(R.id.list_image);;
 
         title.setText(item.title);
         subTitle.setText(item.subTitle);
@@ -55,6 +55,7 @@ public class CustomArrayAdapter extends ArrayAdapter<ListItem> {
         else {
             image.setVisibility(View.GONE);
         }
+
         return convertView;
     }
 }

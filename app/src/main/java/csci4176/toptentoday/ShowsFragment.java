@@ -1,7 +1,6 @@
 package csci4176.toptentoday;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -17,39 +16,46 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 
+/**
+ * Handles fetching the json for shows and filling in the list
+ */
 public class ShowsFragment extends ListFragment implements JSONDownloadTask.OnDownloadCompleted {
 
-    private static final String TAG = "ShowsFrag";
     CustomArrayAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         refresh();
+
         //set adapter up with empty placeholder list
         if (adapter == null) {
-            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Arrays.asList(new ListItem("No Data Loaded", "", "", "", null))));
+            adapter = new CustomArrayAdapter(this.getContext(), new ArrayList<ListItem>(Collections.singletonList(new ListItem("No Data Loaded", "", "", "", null))));
         }
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    //grab current date and use it make call to fetch the json for shows
     public void refresh(){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);
         Date newDate = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
         try {
             new JSONDownloadTask(this).execute(new URL("http://api.themoviedb.org/3/discover/tv?api_key=c0a48133bf57722a3829e6456f01b24f&page=1&air_date.gte="+dateFormat.format(newDate)+"&sort_by=popularity.desc"));
         }
         catch (MalformedURLException e){
-
+            e.printStackTrace();
         }
     }
 
+    //open details
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(this.getActivity(), ShowDetails.class);
@@ -57,12 +63,15 @@ public class ShowsFragment extends ListFragment implements JSONDownloadTask.OnDo
         startActivity(intent);
     }
 
+    //called when API data returns
     public void updateList(JSONObject result){
         ArrayList<ListItem> list = new ArrayList<ListItem>();
+        //error list
         if (result == null){
             list.add(new ListItem("Something Went Wrong!", "Check your internet connection, and try to refresh", null, null, null));
         }
         else {
+            //fill in values
             String baseImgUrl = "http://image.tmdb.org/t/p/w130";
             String baseUrl = "https://www.themoviedb.org/tv/";
             try {

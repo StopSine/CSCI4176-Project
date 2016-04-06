@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 
 /**
- * Created by Blair on 4/3/2016.
+ * Downloads a bitmap to the cache and can fetch it
  */
 
 public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>
@@ -31,6 +31,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>
         return b;
     }
 
+    //set the image view to the downloaded bitmap
     @Override
     protected void onPostExecute(Bitmap b) {
         if (imageViewReference != null && b != null) {
@@ -41,6 +42,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>
         }
     }
 
+    //loads the bitmap from cache to the image view or executes the bitmap worker task to get it
     public void loadBitmap(String url, ImageView image) {
         imageViewReference = new WeakReference<ImageView>(image);
         final Bitmap bitmap = BitmapCache.getInstance().getBitmapFromMemCache(url);

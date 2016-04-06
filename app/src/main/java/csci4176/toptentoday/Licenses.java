@@ -3,22 +3,22 @@ package csci4176.toptentoday;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 /**
- * Created by Blair on 4/3/2016.
+ * Simple list to show api and licenses of libraries used
  */
 public class Licenses extends AppCompatActivity {
 
     ListView listView ;
 
+    //create and populate list
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.licenses);
+        setContentView(R.layout.activity_licenses);
         listView = (ListView) findViewById(R.id.licenses_list);
         String[] values = new String[] { "jsoup MIT license - http://jsoup.org/license",
                 "New York Times: The Most Popular API - http://developer.nytimes.com/Api_terms_of_use",

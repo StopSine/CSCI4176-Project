@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 /**
- * Created by Blair on 3/22/2016.
+ * Details activity for shows
  */
 public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.OnDownloadCompleted{
 
@@ -35,12 +35,10 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail_view);
 
-        String backdropPath = "";
-        String title = "";
-        String overview = "";
-        String release = "";
-        String votes = "";
+        //grab json from saved bundle and load it into variables
+        String backdropPath = "", title = "", overview = "", release = "", votes = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             try {
@@ -50,6 +48,8 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
                 overview = json.getString("overview");
                 release = json.getString("first_air_date");
                 votes = json.getDouble("vote_average") + "/10";
+
+                //download additional information (genres/ratings) from omdbapi
                 new JSONDownloadTask(this).execute(new URL("http://www.omdbapi.com/?t="+URLEncoder.encode(title, "UTF-8")+"&type=series&tomatoes=true"));
             }
             catch (JSONException | MalformedURLException | UnsupportedEncodingException e){
@@ -57,31 +57,33 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
             }
         }
 
-        setContentView(R.layout.movie_detail_view);
+        //setup toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.movie_detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.movie_detail_collapsing_toolbar);
         collapsingToolbarLayout.setTitle(title);
         collapsingToolbarLayout.setTitleEnabled(true);
 
+        //download and add backdrop image
         ImageView imgView = (ImageView) findViewById(R.id.movie_detail_image);
         String backdrop = "https://image.tmdb.org/t/p/w780" + backdropPath;
         new BitmapWorkerTask().loadBitmap(backdrop, imgView);
 
+        //setup text and hide showtimes button
         TextView overviewTextView = (TextView) findViewById(R.id.movie_overview);
         overviewTextView.setText(overview);
         TextView releaseTextView = (TextView) findViewById(R.id.movie_release);
         releaseTextView.setText(release);
         TextView votesTextView = (TextView) findViewById(R.id.votes);
         votesTextView.setText(votes);
-        Button showtimesButton = (Button) findViewById(R.id.showtimesButton);
-        showtimesButton.setVisibility(View.GONE);
+        Button showTimesButton = (Button) findViewById(R.id.showtimesButton);
+        showTimesButton.setVisibility(View.GONE);
 
 
     }
 
+    //called after omdb download finishes, sets additional ratings and genres
     public void updateList(JSONObject result){
         String imdbVotes = "";
         String tomatoesVotes = "";
@@ -98,7 +100,7 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < 3; i++) {
-            TextView textView = (TextView) inflater.inflate(R.layout.genre_text, null);
+            TextView textView = (TextView) inflater.inflate(R.layout.genre_text_view, null);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
@@ -117,10 +119,6 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
         tomatoesVotesTextView.setText(tomatoesVotes);
     }
 
-    public void onClick(View v) {
-        //unimplemented
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -128,10 +126,10 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
         return true;
     }
 
+    //setup back button and open in browser
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -142,7 +140,7 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
                     id = json.getInt("id");
                 }
                 catch (JSONException e){
-
+                    e.printStackTrace();
                 }
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUrl + id));
                 startActivity(browserIntent);
@@ -150,5 +148,4 @@ public class ShowDetails extends AppCompatActivity implements JSONDownloadTask.O
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

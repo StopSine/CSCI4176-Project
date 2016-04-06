@@ -19,76 +19,76 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Main app screen with viewpager and Articles/Movies/Shows fragments
+ */
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
     private DrawerLayout mDrawer;
-    private NavigationView nView;
-    private ActionBarDrawerToggle mDrawerToggle;
-
     PagerAdapter adapter;
 
-    //setup toolbar, tabs, and pager
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //setup toolbar
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+
+
+        //setup drawer and hamburger icon
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        nView = (NavigationView) findViewById(R.id.nav_view);
-        mDrawerToggle = new ActionBarDrawerToggle(
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
                 this,  mDrawer, mToolbar,
                 R.string.drawer_open, R.string.drawer_close
         );
-
         mDrawer.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        //create viewpager tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Articles"));
         tabLayout.addTab(tabLayout.newTab().setText("Movies"));
         tabLayout.addTab(tabLayout.newTab().setText("Shows"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        mViewPager.setAdapter(adapter);
+        //add viewpager, set paging limit and attach custom adapter
+        mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         mViewPager.setOffscreenPageLimit(2);
-
+        adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        mViewPager.setAdapter(adapter);
+        //attach tabs to viewpager
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
             }
-
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
+            public void onTabUnselected(TabLayout.Tab tab) {}
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
-        nView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        onNavItemSelected(menuItem);
-                        return true;
-                    }
-                });
 
+        //setup drawer menu onItemSelected
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    menuItem.setChecked(true);
+                    onNavItemSelected(menuItem);
+                    return true;
+                }
+            }
+        );
     }
 
+    //inflate menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //handle refresh action
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //handle filtering from selecting drawer items
     public void onNavItemSelected(MenuItem menuItem) {
         switch(menuItem.getGroupId()) {
             case R.id.pref_filter_group:
@@ -141,10 +143,5 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         mDrawer.closeDrawers();
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
     }
 }

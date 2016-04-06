@@ -4,7 +4,33 @@
     <string name="drawer_close">Close Drawer</string>
     <string name="open_in_new">Open in new window</string>
     <string name="refresh">Refresh</string>
-
     <string name="pref_title_filter">Filter articles</string>
     <string name="licenses">Licenses</string>
+    <string name="thumbnail_description">Image Thumbnail</string>
+
+    <string name="check_showtimes">Check for nearby showtimes</string>
+    <string name="details_title_overview">Overview:</string>
+    <string name="details_title_release">Release Date:</string>
+    <string name="details_title_scores">Scores:</string>
+    <string name="details_backdrop_description">Backdrop Image</string>
+    <string name="votes_tmdb">TMDb</string>
+    <string name="votes_imdb">IMDb</string>
+    <string name="votes_tomatoes">RottenTomatoes</string>
+
+    <!--Strings for filtering articles-->
+    <string name="pref_label_all">All</string>
+    <string name="pref_label_world">World</string>
+    <string name="pref_label_science">Science</string>
+    <string name="pref_label_politics">Politics</string>
+    <string name="pref_label_national">National</string>
+    <string name="pref_label_technology">Technology</string>
+    <string name="pref_label_magazine">Magazine</string>
+    <string name="pref_label_fashion">Fashion</string>
+    <string name="pref_label_business">Business</string>
+    <string name="pref_label_opinion">Opinion</string>
+    <string name="pref_label_health">Health</string>
+    <string name="pref_label_sports">Sports</string>
+    <string name="pref_label_arts">Arts</string>
+    <string name="pref_label_food">Food</string>
+    <string name="pref_label_travel">Travel</string>
 </resources>

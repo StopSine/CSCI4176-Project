@@ -29,6 +29,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+/**
+ * Details activity for movies
+ */
 public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.OnDownloadCompleted{
 
     JSONObject json;
@@ -36,12 +39,10 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail_view);
 
-        String backdropPath = "";
-        String title = "";
-        String overview = "";
-        String release = "";
-        String votes = "";
+        //grab json from saved bundle and load it into variables
+        String backdropPath = "", title = "", overview = "", release = "", votes = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             try {
@@ -51,6 +52,8 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
                 overview = json.getString("overview");
                 release = json.getString("release_date");
                 votes = json.getDouble("vote_average") + "/10";
+
+                //download additional information (genres/ratings) from omdbapi
                 new JSONDownloadTask(this).execute(new URL("http://www.omdbapi.com/?t="+ URLEncoder.encode(title, "UTF-8")+"&type=movie&tomatoes=true"));
             }
             catch (JSONException | MalformedURLException | UnsupportedEncodingException e){
@@ -58,7 +61,7 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
             }
         }
 
-        setContentView(R.layout.movie_detail_view);
+        //setup toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.movie_detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,10 +70,12 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
         collapsingToolbarLayout.setTitle(title);
         collapsingToolbarLayout.setTitleEnabled(true);
 
+        //download and add backdrop image
         ImageView imgView = (ImageView) findViewById(R.id.movie_detail_image);
         String backdrop = "https://image.tmdb.org/t/p/w780" + backdropPath;
         new BitmapWorkerTask().loadBitmap(backdrop, imgView);
 
+        //setup text
         TextView overviewTextView = (TextView) findViewById(R.id.movie_overview);
         overviewTextView.setText(overview);
         TextView releaseTextView = (TextView) findViewById(R.id.movie_release);
@@ -80,6 +85,7 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
 
     }
 
+    //called after omdb download finishes, sets additional ratings and genres
     public void updateList(JSONObject result){
         String imdbVotes = "";
         String tomatoesVotes = "";
@@ -96,7 +102,7 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < 3; i++) {
-            TextView textView = (TextView) inflater.inflate(R.layout.genre_text, null);
+            TextView textView = (TextView) inflater.inflate(R.layout.genre_text_view, null);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
@@ -115,6 +121,7 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
         tomatoesVotesTextView.setText(tomatoesVotes);
     }
 
+    //handles click of showtimes button, grabs coordinates and opens browser
     public void onClick(View v) {
         boolean PermissionFineLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
         boolean PermissionCourseLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
@@ -137,10 +144,10 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
         return true;
     }
 
+    //setup back button and open in browser
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -151,7 +158,7 @@ public class MovieDetails extends AppCompatActivity implements JSONDownloadTask.
                     id = json.getInt("id");
                 }
                 catch (JSONException e){
-
+                    e.printStackTrace();
                 }
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUrl+id));
                 startActivity(browserIntent);

@@ -25,6 +25,7 @@
             android:background="#BB000000">
             <ImageView
                 android:id="@+id/movie_detail_image"
+                android:contentDescription="@string/details_backdrop_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -66,14 +67,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:padding="@dimen/activity_horizontal_margin">
             <TextView
                 android:id="@+id/movie_overview_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Overview:"
-                android:textSize="15dip"
-                android:textColor="@android:color/black"
+                android:text="@string/details_title_overview"
+                android:textSize="15sp"
+                android:textColor="@color/text"
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/movie_overview"
@@ -84,8 +85,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Release Date:"
-                android:textSize="15dip"
+                android:text="@string/details_title_release"
+                android:textSize="15sp"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"/>
             <TextView
@@ -96,11 +97,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Scores:"
-                android:textSize="15dip"
+                android:text="@string/details_title_scores"
+                android:textSize="15sp"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"/>
+                android:textColor="@color/text"/>
             <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -109,17 +110,17 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="TMDB"
+                        android:text="@string/votes_tmdb"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="IMDb"
+                        android:text="@string/votes_imdb"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="RottenTomatoes"
+                        android:text="@string/votes_tomatoes"
                         android:textStyle="bold"/>
                 </TableRow>
                 <TableRow>
@@ -144,7 +145,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Check for nearby showtimes"
+                android:text="@string/check_showtimes"
                 android:onClick="onClick"
                 android:clickable="true"/>
         </LinearLayout>

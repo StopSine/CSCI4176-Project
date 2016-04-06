@@ -3,7 +3,7 @@ package csci4176.toptentoday;
 import org.json.JSONObject;
 
 /**
- * Created by Blair on 3/13/2016.
+ * List item object to store the values that are needed
  */
 public class ListItem {
     public String title;

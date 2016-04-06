@@ -10,50 +10,22 @@
         android:checkableBehavior="all">
         <item
             android:id="@+id/pref_filter_all"
-            android:title="All"
+            android:title="@string/pref_label_all"
             android:checked="true" />
-        <item
-            android:id="@+id/pref_filter_world"
-            android:title="World" />
-        <item
-            android:id="@+id/pref_filter_science"
-            android:title="Science" />
-        <item
-            android:id="@+id/pref_filter_politics"
-            android:title="Politics" />
-        <item
-            android:id="@+id/pref_filter_national"
-            android:title="National" />
-        <item
-            android:id="@+id/pref_filter_technology"
-            android:title="Technology" />
-        <item
-            android:id="@+id/pref_filter_magazine"
-            android:title="Magazine" />
-        <item
-            android:id="@+id/pref_filter_fashion"
-            android:title="Fashion" />
-        <item
-            android:id="@+id/pref_filter_business"
-            android:title="Business" />
-        <item
-            android:id="@+id/pref_filter_opinion"
-            android:title="Opinion" />
-        <item
-            android:id="@+id/pref_filter_health"
-            android:title="Health" />
-        <item
-            android:id="@+id/pref_filter_sports"
-            android:title="Sports" />
-        <item
-            android:id="@+id/pref_filter_arts"
-            android:title="Arts" />
-        <item
-            android:id="@+id/pref_filter_food"
-            android:title="Food" />
-        <item
-            android:id="@+id/pref_filter_travel"
-            android:title="Travel" />
+        <item android:title="@string/pref_label_world" />
+        <item android:title="@string/pref_label_science" />
+        <item android:title="@string/pref_label_politics" />
+        <item android:title="@string/pref_label_national" />
+        <item android:title="@string/pref_label_technology" />
+        <item android:title="@string/pref_label_magazine" />
+        <item android:title="@string/pref_label_fashion" />
+        <item android:title="@string/pref_label_business" />
+        <item android:title="@string/pref_label_opinion" />
+        <item android:title="@string/pref_label_health" />
+        <item android:title="@string/pref_label_sports" />
+        <item android:title="@string/pref_label_arts" />
+        <item android:title="@string/pref_label_food" />
+        <item android:title="@string/pref_label_travel" />
     </group>
     <item
         android:id="@+id/nav_licenses"

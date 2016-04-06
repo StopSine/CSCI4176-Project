@@ -20,6 +20,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+/**
+ * Details activity for articles
+ */
 public class ArticleDetails extends AppCompatActivity {
 
     JSONObject json;
@@ -27,9 +30,10 @@ public class ArticleDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_article_details);
 
-        String title = "";
-        String url = "";
+        //grab json from saved bundle and load it into variables
+        String title = "", url = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             try {
@@ -42,19 +46,24 @@ public class ArticleDetails extends AppCompatActivity {
 
             }
         }
+
+        //start task to get article content
         new scrapHtmlTask().execute(url);
-        setContentView(R.layout.article_details);
+
+        //setup toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(title);
     }
 
+    //called after scrapHtmlTask, sets the text view to the scrapped text
     public void updateText(String s){
         TextView articleText = (TextView) findViewById(R.id.article_text);
         articleText.setText(s);
     }
 
+    //setup back button and open in browser
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -67,7 +76,7 @@ public class ArticleDetails extends AppCompatActivity {
                     url = json.getString("url");
                 }
                 catch (JSONException e){
-
+                    e.printStackTrace();
                 }
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(browserIntent);
@@ -83,6 +92,7 @@ public class ArticleDetails extends AppCompatActivity {
         return true;
     }
 
+    //uses the jSoup library to grab the content from the articles source
     class scrapHtmlTask extends AsyncTask<String, Void, String> {
 
         @Override

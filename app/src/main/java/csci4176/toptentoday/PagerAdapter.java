@@ -3,8 +3,10 @@ package csci4176.toptentoday;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
+/**
+ * Handles the creation of the articles, movies and shows fragments for the viewpager
+ */
 public class PagerAdapter extends FragmentPagerAdapter {
     int mNumOfTabs;
 
@@ -12,9 +14,9 @@ public class PagerAdapter extends FragmentPagerAdapter {
     MoviesFragment movies;
     ShowsFragment shows;
 
-    public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+    public PagerAdapter(FragmentManager fm, int numOfTabs) {
         super(fm);
-        this.mNumOfTabs = NumOfTabs;
+        this.mNumOfTabs = numOfTabs;
     }
 
     public ArticlesFragment getArticles(){
